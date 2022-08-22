@@ -2,7 +2,7 @@ import {
   Injectable,
   ForbiddenException,
 } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../prisma/prisma.service";
 import { bookmarkDto } from "./dto/bookmark.dto";
 
 @Injectable()
@@ -27,6 +27,21 @@ export class BookmarkService {
     });
 
     return bookmarks;
+  }
+
+  async getBookmark(userId: number, bookmarkId: number) {
+    try {
+      let Bookmark = await this.prisma.bookmark.findUnique({
+        where: { id: bookmarkId },
+      });
+      if (Bookmark.userID === userId) {
+        return Bookmark;
+      } else {
+        throw "You can't access this bookmark";
+      }
+    } catch (err) {
+      throw new ForbiddenException(err);
+    }
   }
 
   async deleteMyBookmark(

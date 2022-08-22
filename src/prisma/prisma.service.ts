@@ -16,4 +16,11 @@ export class PrismaService extends PrismaClient {
       },
     });
   }
+
+  cleadDb() {
+    this.$transaction([
+      this.bookmark.deleteMany(),
+      this.user.deleteMany(),
+    ]);
+  }
 }

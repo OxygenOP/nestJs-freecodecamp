@@ -7,8 +7,8 @@ import {
   Body,
 } from "@nestjs/common";
 import { User } from "@prisma/client";
-import { GetUser } from "src/auth/decorator";
-import { jwtGuard } from "src/auth/jwtGuard";
+import { GetUser } from "../auth/decorator";
+import { jwtGuard } from "../auth/jwtGuard";
 import { BookmarkService } from "./bookmark.service";
 import {
   bookmarkDto,
@@ -35,6 +35,19 @@ export class BookmarkController {
   @Get("")
   myBookmarks(@GetUser() user: User) {
     return this.bookmarkService.getMyBookmarks(user.id);
+  }
+
+  @UseGuards(jwtGuard)
+  @Get("bookmark")
+  getBookmark(
+    @GetUser() user: User,
+    @Body() dto: { id: number },
+  ) {
+    console.log("Started", dto, user);
+    return this.bookmarkService.getBookmark(
+      user.id,
+      dto.id,
+    );
   }
 
   @UseGuards(jwtGuard)
